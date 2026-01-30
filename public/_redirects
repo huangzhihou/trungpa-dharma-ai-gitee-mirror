@@ -1,7 +1,7 @@
 # Cloudflare Pages 重定向配置
 
-# API 路由 - 由 Functions 处理
-/api/* /api/:path 200
+# API 路由 - 由 Functions 处理（无重定向）
+/api/chat api/chat 200
 
-# 所有其他请求使用 index-vercel.html
-/* /index-vercel.html 200
+# SPA fallback
+/* /index-vercel.html 200!
