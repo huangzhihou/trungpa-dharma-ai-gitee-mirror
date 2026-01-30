@@ -213,19 +213,21 @@
       text-indent: 2em;
     }
 
-    .message.assistant .message-content p:last-child {
+    .message.assistant .message-content p:last-of-type {
       margin-bottom: 0;
     }
 
-    /* 出处段落样式 */
-    .message.assistant .message-content p:last-child {
+    /* 出处段落样式 - 使用 last-of-type 避免冲突 */
+    .message.assistant .message-content p.source-reference {
       text-indent: 0;
       color: #888;
       font-size: 13px;
       border-top: 1px dashed #ddd;
       padding-top: 10px;
       margin-top: 8px;
+      margin-bottom: 0;
       font-style: italic;
+      font-weight: normal;
     }
 
     .typing {
@@ -282,7 +284,7 @@
       }
 
       /* 移动端出处段落 */
-      .message.assistant .message-content p:last-child {
+      .message.assistant .message-content p.source-reference {
         font-size: 12px;
         padding-top: 8px;
         margin-top: 6px;
@@ -485,22 +487,21 @@
 
       // AI 回答：包含内容 + 出处
       if (role === 'assistant') {
-        const paragraphs = [];
-
         // 添加正文段落
         const contentParagraphs = content.split('\n').filter(p => p.trim());
-        paragraphs.push(...contentParagraphs);
-
-        // 在结尾添加出处
-        if (sources.length > 0) {
-          paragraphs.push('—— 出自《创巴仁波切文集》: ' + sources.join('、'));
-        }
-
-        paragraphs.forEach(para => {
+        contentParagraphs.forEach(para => {
           const p = document.createElement('p');
           p.textContent = para;
           contentDiv.appendChild(p);
         });
+
+        // 在结尾添加出处（如果有）
+        if (sources && sources.length > 0) {
+          const sourceP = document.createElement('p');
+          sourceP.className = 'source-reference';
+          sourceP.textContent = '—— 出自《创巴仁波切文集》: ' + sources.join('、');
+          contentDiv.appendChild(sourceP);
+        }
       } else {
         contentDiv.textContent = content;
       }
