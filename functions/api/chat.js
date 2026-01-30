@@ -608,6 +608,9 @@ ${hasContext ? `
 
 // 调用智谱AI API
 async function callZhipuAI(messages, context, apiKey) {
+  console.log('API Key 配置状态:', apiKey ? '已配置' : '未配置');
+  console.log('API Key 前缀:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
+
   const systemPrompt = buildSystemPrompt(!!context);
 
   const requestBody = {
