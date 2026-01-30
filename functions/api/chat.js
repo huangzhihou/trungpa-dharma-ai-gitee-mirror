@@ -528,10 +528,6 @@ ${hasContext ? `
 
 // 调用智谱AI API
 async function callZhipuAI(messages, context, apiKey) {
-  if (!apiKey) {
-    throw new Error('API Key 未配置');
-  }
-
   const systemPrompt = buildSystemPrompt(!!context);
 
   const requestBody = {
@@ -545,6 +541,11 @@ async function callZhipuAI(messages, context, apiKey) {
     max_tokens: 4000
   };
 
+  if (!apiKey) {
+    console.warn('API Key 未配置，调用智谱AI失败');
+    return generateFallbackResponse(messages, context);
+  }
+
   const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
     method: 'POST',
     headers: {
@@ -556,11 +557,33 @@ async function callZhipuAI(messages, context, apiKey) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`API 请求失败: ${response.status} ${errorText}`);
+    console.error('智谱AI API错误:', response.status, errorText);
+    return generateFallbackResponse(messages, context);
   }
 
   const data = await response.json();
   return data.choices[0].message.content;
+}
+
+// 生成备用响应（当API不可用时）
+function generateFallbackResponse(messages, context) {
+  const lastMessage = messages.find(m => m.role === 'user');
+  const question = lastMessage?.content || '';
+
+  const responses = {
+    'zh-CN': `您好！我是秋阳创巴仁波切教法的AI助教。
+
+基于秋阳创巴仁波切的教导，关于"${question}"：
+
+${context ? '根据资料：\n' + context.substring(0, 500) + '\n\n' : ''}秋阳创巴仁波切的教法强调直接体验和觉知，而非单纯的理论探讨。建议您通过实际的禅修练习来深入理解这些教导。
+
+如需更详细的解答，请稍后再试或联系管理员配置AI服务。
+
+---
+*本回答为系统默认响应（AI服务暂不可用）*`
+  };
+
+  return responses['zh-CN'];
 }
 
 // Cloudflare Pages Function 入口
