@@ -190,26 +190,20 @@ async function getBooksData() {
   }
 
   try {
-    const response = await fetch('/data/all-content.json', {
-      headers: { 'Range': 'bytes=0-10485760' }
-    });
+    // 尝试加载合并的数据文件
+    const response = await fetch('/data/all-content.json');
 
-    if (response.ok || response.status === 206) {
+    if (response.ok) {
       const text = await response.text();
       try {
         const data = JSON.parse(text);
-        cachedBooks = data;
-        cacheTime = Date.now();
-        return data;
-      } catch (e) {
-        const lastBrace = text.lastIndexOf('}');
-        if (lastBrace > 0) {
-          const fixedText = text.substring(0, lastBrace + 1) + ']';
-          const data = JSON.parse(fixedText);
+        if (Array.isArray(data) && data.length > 0) {
           cachedBooks = data;
           cacheTime = Date.now();
           return data;
         }
+      } catch (e) {
+        console.error('JSON解析错误:', e.message);
       }
     }
 
