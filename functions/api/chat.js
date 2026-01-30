@@ -263,6 +263,44 @@ function searchContent(books, query, topResults = 8) {
     .slice(0, topResults);
 }
 
+// 中文关键词到英文的翻译映射（用于搜索）
+const searchTermMap = {
+  '基本善': 'basic goodness',
+  '本初善': 'basic goodness',
+  '精神唯物主义': 'spiritual materialism',
+  '正念': 'mindfulness',
+  '冥想': 'meditation',
+  '禅修': 'meditation',
+  '大手印': 'mahamudra',
+  '菩提心': 'bodhichitta',
+  '菩萨道': 'bodhisattva',
+  '菩萨戒': 'bodhisattva vow',
+  '空性': 'emptiness shunyata',
+  '佛性': 'buddha nature',
+  '慈悲': 'compassion',
+  '智慧': 'wisdom prajna',
+  '止': 'shamatha samatha',
+  '观': 'vipashyana vipassana',
+  '上师': 'guru lama',
+  '仁波切': 'rinpoche',
+  '灌顶': 'initiation abhisheka',
+  '本尊': 'yidam deity',
+  '金刚乘': 'vajrayana tantra',
+  '轮回': 'samsara',
+  '涅槃': 'nirvana',
+  '业力': 'karma',
+  '香巴拉': 'shambhala',
+  '风马': 'lungta windhorse',
+  '东方大日': 'great eastern sun',
+  '德拉': 'drala',
+  '大手印': 'mahamudra',
+  '三昧耶': 'samaya',
+  '曼荼罗': 'mandala',
+  '藏传佛教': 'tibetan buddhism',
+  '噶举': 'kagyu',
+  '宁玛': 'nyingma',
+};
+
 // 提取关键词（中英文）
 function extractKeywords(query) {
   // 移除常见停用词
@@ -270,18 +308,41 @@ function extractKeywords(query) {
 
   // 提取英文单词
   const englishWords = query.toLowerCase().match(/[a-z]+/gi) || [];
-  // 提取中文词组（2-6个字，保留更长的词组）
+  // 提取中文词组（2-6个字）
   const chineseWords = query.match(/[\u4e00-\u9fa5]{2,6}/g) || [];
 
   const keywords = [
-    ...englishWords.filter(w => w.length > 2 && !stopWords.has(w)),
-    ...chineseWords.filter(w => !stopWords.has(w))
+    ...englishWords.filter(w => w.length > 2 && !stopWords.has(w))
   ];
 
+  // 将中文翻译成英文加入搜索关键词
+  chineseWords.forEach(cw => {
+    if (!stopWords.has(cw)) {
+      keywords.push(cw); // 保留中文
+      // 添加英文翻译
+      if (searchTermMap[cw]) {
+        const eng = searchTermMap[cw].toLowerCase().split(' ');
+        eng.forEach(e => {
+          if (e.length > 2) keywords.push(e);
+        });
+      }
+    }
+  });
+
   // 如果没有中文词组，尝试提取整个中文部分
-  if (keywords.length === 0 || (keywords.length === englishWords.length)) {
+  if (keywords.length === englishWords.length) {
     const allChinese = query.match(/[\u4e00-\u9fa5]+/g) || [];
-    keywords.push(...allChinese.filter(w => !stopWords.has(w)));
+    allChinese.forEach(cw => {
+      if (!stopWords.has(cw)) {
+        keywords.push(cw);
+        if (searchTermMap[cw]) {
+          const eng = searchTermMap[cw].toLowerCase().split(' ');
+          eng.forEach(e => {
+            if (e.length > 2) keywords.push(e);
+          });
+        }
+      }
+    });
   }
 
   return [...new Set(keywords)];
