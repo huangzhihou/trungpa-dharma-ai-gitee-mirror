@@ -243,11 +243,26 @@ function searchContent(books, query, topResults = 8) {
   const results = [];
   const keywords = extractKeywords(query);
 
+  // 调试日志
+  console.log(`搜索关键词: ${keywords.join(', ')}`);
+
   books.forEach(book => {
-    const paragraphs = book.text.split(/\n+/).filter(p => p.trim().length > 30);
+    const text = book.text || '';
+    const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 30);
 
     paragraphs.forEach((para) => {
-      const score = calculateRelevance(keywords, para);
+      const paraLower = para.toLowerCase();
+      let score = 0;
+
+      keywords.forEach(kw => {
+        if (paraLower.includes(kw.toLowerCase())) {
+          const matches = paraLower.match(new RegExp(kw.toLowerCase(), 'gi'));
+          if (matches) {
+            score += matches.length * 2;
+          }
+        }
+      });
+
       if (score > 0) {
         results.push({
           book: book.filename,
@@ -258,9 +273,13 @@ function searchContent(books, query, topResults = 8) {
     });
   });
 
-  return results
-    .sort((a, b) => b.score - a.score)
-    .slice(0, topResults);
+  console.log(`找到 ${results.length} 条结果`);
+  const sorted = results.sort((a, b) => b.score - a.score).slice(0, topResults);
+  if (sorted.length > 0) {
+    console.log(`第一条: ${sorted[0].text.substring(0, 50)}...`);
+  }
+
+  return sorted;
 }
 
 // 中文关键词到英文的翻译映射（用于搜索）
