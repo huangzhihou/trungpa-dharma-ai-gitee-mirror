@@ -26,11 +26,29 @@
       text-align: center;
       background: #fff;
       border-bottom: 1px solid #eaeaea;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
     }
 
     .header h1 {
       font-size: 18px;
       font-weight: 500;
+    }
+
+    .index-btn {
+      padding: 8px 16px;
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .index-btn:hover {
+      border-color: #1a1a1a;
     }
 
     .chat-area {
@@ -51,7 +69,7 @@
 
     .welcome {
       text-align: center;
-      padding: 40px 20px;
+      padding: 60px 20px;
       color: #666;
     }
 
@@ -59,27 +77,7 @@
       font-size: 15px;
       font-weight: 400;
       line-height: 1.8;
-      margin-bottom: 30px;
-    }
-
-    .topics {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .topic {
-      padding: 14px;
-      background: #fff;
-      border: 1px solid #eaeaea;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.15s;
-    }
-
-    .topic:hover {
-      border-color: #1a1a1a;
+      margin-bottom: 16px;
     }
 
     .message {
@@ -169,11 +167,127 @@
       display: none !important;
     }
 
-    @media (max-width: 600px) {
-      .topics {
-        grid-template-columns: 1fr;
-      }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
 
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80vh;
+      margin: auto;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eaeaea;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      padding: 0 8px;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .modal-body h2 {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 20px 0 10px;
+    }
+
+    .modal-body h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 16px 0 8px;
+      color: #333;
+    }
+
+    .modal-body h4 {
+      font-size: 13px;
+      font-weight: 500;
+      margin: 12px 0 6px;
+      color: #666;
+    }
+
+    .modal-body p {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .modal-body ul {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .modal-body li {
+      margin-bottom: 4px;
+    }
+
+    .modal-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+
+    .modal-body th, .modal-body td {
+      border: 1px solid #eaeaea;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .modal-body th {
+      background: #f9f9f9;
+      font-weight: 500;
+    }
+
+    .modal-body code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
       .input-inner {
         flex-wrap: wrap;
       }
@@ -181,26 +295,23 @@
       #sendButton {
         flex: 1;
       }
+
+      .modal-body {
+        padding: 16px;
+      }
     }
   </style>
 </head>
 <body>
   <header class="header">
     <h1>创巴仁波切教法</h1>
+    <button class="index-btn" onclick="showModal()">索引</button>
   </header>
 
   <div class="chat-area">
     <div class="messages-container" id="messagesContainer">
       <div class="welcome" id="welcome">
         <h2>基于创巴仁波切十部文集<br>所有回答均出自原文</h2>
-        <div class="topics">
-          <div class="topic" onclick="ask('什么是精神唯物主义')">精神唯物主义</div>
-          <div class="topic" onclick="ask('如何修习正念')">正念冥想</div>
-          <div class="topic" onclick="ask('解释大手印')">大手印</div>
-          <div class="topic" onclick="ask('什么是基本善')">基本善</div>
-          <div class="topic" onclick="ask('上师的作用')">上师与传承</div>
-          <div class="topic" onclick="ask('香巴拉之道')">香巴拉传统</div>
-        </div>
       </div>
       <div id="messages"></div>
       <div class="typing" id="typing">正在思考...</div>
@@ -214,6 +325,115 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>教法大纲</h2>
+        <button class="close-btn" onclick="hideModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <h2>目录</h2>
+        <ul>
+          <li><a href="#overview">全集概览</a></li>
+          <li><a href="#themes">核心主题</a></li>
+          <li><a href="#path">学习路径</a></li>
+        </ul>
+
+        <h2 id="overview">10卷全集结构</h2>
+        <table>
+          <tr><th>卷号</th><th>主要主题</th><th>核心著作</th></tr>
+          <tr><td>卷1</td><td>早期生平与禅修入门</td><td>Born in Tibet, Meditation in Action</td></tr>
+          <tr><td>卷2</td><td>自由的神话与困境</td><td>The Myth of Freedom, The Lion's Roar</td></tr>
+          <tr><td>卷3</td><td>精神物质主义</td><td>Cutting Through Spiritual Materialism</td></tr>
+          <tr><td>卷4</td><td>禅修指导</td><td>The Heart of the Buddha</td></tr>
+          <tr><td>卷5</td><td>菩萨道训练</td><td>Training the Mind, Illusion's Game</td></tr>
+          <tr><td>卷6</td><td>金刚乘道</td><td>The Path Is the Goal</td></tr>
+          <tr><td>卷7</td><td>香巴拉教法</td><td>Shambhala, Great Eastern Sun</td></tr>
+          <tr><td>卷8</td><td>香巴拉训练</td><td>Sacred World, Great Eastern Sun</td></tr>
+          <tr><td>卷9</td><td>诗歌与艺术</td><td>Timely Rain, The Art of Calligraphy</td></tr>
+          <tr><td>卷10</td><td>晚期教法</td><td>Journey without Goal, Crazy Wisdom</td></tr>
+        </table>
+
+        <h2 id="themes">核心主题</h2>
+
+        <h3>精神物质主义</h3>
+        <p><strong>定义：</strong>自我利用修道来滋养自己</p>
+        <p><strong>表现：</strong>修道上的成就感、优越感、特殊体验</p>
+        <p><strong>对治：</strong>觉知、放下、直截观察</p>
+
+        <h3>正念禅修</h3>
+        <ul>
+          <li>姿势的重要性</li>
+          <li>观呼吸</li>
+          <li>处理杂念：不强求、不放松、不执着</li>
+        </ul>
+
+        <h3>本初善</h3>
+        <p>众生的本性本来就是善的，这不是道德判断，而是存在本质。我们不需要"变成"，而是"发现"。</p>
+
+        <h3>勇士的四项品质</h3>
+        <ul>
+          <li><strong>无畏：</strong>不是没有恐惧，而是面对恐惧</li>
+          <li><strong>温柔：</strong>对自己和世界的开放</li>
+          <li><strong>精确：</strong>清晰的觉知</li>
+          <li><strong>放逸：</strong>放下执着，自由的参与</li>
+        </ul>
+
+        <h3>六度波罗蜜</h3>
+        <ul>
+          <li>布施：放下执着</li>
+          <li>持戒：觉知地行动</li>
+          <li>忍辱：接受现状</li>
+          <li>精进：持续的觉知</li>
+          <li>禅定：心的安定</li>
+          <li>般若：智慧的洞见</li>
+        </ul>
+
+        <h3>金刚乘特点</h3>
+        <ul>
+          <li>运用一切经验作为修道</li>
+          <li>不排斥，而是转化</li>
+          <li>需要上师指导</li>
+        </ul>
+
+        <h2 id="path">学习路径建议</h2>
+
+        <h3>初学者（0-6个月）</h3>
+        <ol>
+          <li>Meditation in Action - 理解禅修与生活</li>
+          <li>The Myth of Freedom - 理解自由的真义</li>
+          <li>Cutting Through Spiritual Materialism - 认识修道陷阱</li>
+        </ol>
+
+        <h3>中级（6个月-2年）</h3>
+        <ol>
+          <li>The Heart of the Buddha - 佛法核心</li>
+          <li>Training the Mind - 菩萨道训练</li>
+          <li>Shambhala: Sacred Path of the Warrior - 勇士之道</li>
+        </ol>
+
+        <h3>深入（2年以上）</h3>
+        <ol>
+          <li>The Path Is the Goal - 金刚乘道</li>
+          <li>Journey without Goal - 密续深入</li>
+          <li>Crazy Wisdom - 疯智教导</li>
+        </ol>
+
+        <h3>术语对照</h3>
+        <ul>
+          <li>般若 - 智慧</li>
+          <li>菩提心 - 觉悟心</li>
+          <li>空性 - 无自性</li>
+          <li>止 - 平静安住</li>
+          <li>观 - 洞察</li>
+          <li>本初善 - 基本善</li>
+          <li>精神唯物主义 - 修道陷阱</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <script>
     const messagesContainer = document.getElementById('messagesContainer');
     const welcome = document.getElementById('welcome');
@@ -221,13 +441,23 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const typing = document.getElementById('typing');
+    const modal = document.getElementById('modal');
 
     let history = [];
 
-    function ask(question) {
-      messageInput.value = question;
-      sendMessage();
+    function showModal() {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
+
+    function hideModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) hideModal();
+    });
 
     function addMessage(role, content, sources = []) {
       const div = document.createElement('div');
