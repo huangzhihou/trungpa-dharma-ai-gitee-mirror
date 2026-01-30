@@ -169,7 +169,7 @@ let cachedBooks = null;
 let cacheTime = null;
 const CACHE_DURATION = 10 * 60 * 1000;
 
-// 书籍文件列表
+// 书籍文件列表（用于备用加载）
 const BOOK_FILES = [
   'The_Collected_Works_of_Ch_gyam_Trungpa_Volume_1__Ch_gyam_Trungpa___Z-Library___1_.pdf.json',
   'The_Collected_Works_of_Cho_gyam_Trungpa_Volume_3__Cho_gyam_Trungpa___Z-Library_.pdf.json',
@@ -316,16 +316,16 @@ function calculateRelevance(keywords, text) {
 
 // 卷名映射
 const volumeNameMap = {
-  'Volume_1': '卷一',
-  'Volume_2': '卷二',
-  'Volume_3': '卷三',
-  'Volume_4': '卷四',
-  'Volume_5': '卷五',
-  'Volume_6': '卷六',
-  'Volume_7': '卷七',
-  'Volume_8': '卷八',
-  'Volume_9': '卷九',
-  'Volume_10': '卷十'
+  '1': '卷一',
+  '2': '卷二',
+  '3': '卷三',
+  '4': '卷四',
+  '5': '卷五',
+  '6': '卷六',
+  '7': '卷七',
+  '8': '卷八',
+  '9': '卷九',
+  '10': '卷十'
 };
 
 // 优化的来源格式化
@@ -335,9 +335,10 @@ function formatSources(relevantContent) {
   // 按卷分组
   const volumeGroups = {};
   relevantContent.forEach(item => {
-    const volMatch = item.book.match(/Volume[_\s]*(\d+)/i);
+    // 匹配 "Volume 3" 或 "Volume_3" 格式
+    const volMatch = item.book.match(/Volume[\s_]*(\d+)/i);
     const volNum = volMatch ? volMatch[1] : '';
-    const volName = volumeNameMap[`Volume_${volNum}`] || `卷${volNum}`;
+    const volName = volumeNameMap[volNum] || `卷${volNum}`;
     if (!volumeGroups[volName]) {
       volumeGroups[volName] = [];
     }
