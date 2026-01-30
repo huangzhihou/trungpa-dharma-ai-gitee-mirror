@@ -245,7 +245,7 @@ async function getBooksData() {
 }
 
 // 改进的搜索算法 - 支持中文和英文关键词
-function searchContent(books, query, topResults = 5) {
+function searchContent(books, query, topResults = 8) {
   const results = [];
   const keywords = extractKeywords(query);
 
@@ -379,8 +379,8 @@ function getTermsGuidance() {
 function standardizeOutput(text) {
   let result = text;
 
-  // 测试：添加标记确认函数被调用
-  result = '[TEST]' + result;
+  // 移除测试标记
+  result = result.replace(/^\[TEST\]/, '');
 
   // 1. 过滤敏感政治内容
   const sensitivePatterns = [
@@ -399,16 +399,13 @@ function standardizeOutput(text) {
   // 2. 清理多余空格
   result = result.replace(/\s{2,}/g, ' ');
 
-  // 3. 上师称呼规范化
-  let idx;
-  while ((idx = result.indexOf('秋阳秋阳')) !== -1) {
-    result = result.substring(0, idx) + '秋阳' + result.substring(idx + 4);
-  }
-
-  // 处理英文名变体
-  result = result.replace(/(?:Chögyam|Chogyam)?\s*Trungpa(?:\s+Rinpoche)?/gi, '秋阳创巴仁波切');
-  // 统一短版本
+  // 3. 上师称呼规范化（注意顺序：先处理短的，再处理长的）
+  // 先把所有 "创巴仁波切" 变成 "秋阳创巴仁波切"
   result = result.replace(/创巴仁波切/g, '秋阳创巴仁波切');
+  // 再处理英文名变体
+  result = result.replace(/(?:Chögyam|Chogyam)?\s*Trungpa(?:\s+Rinpoche)?/gi, '秋阳创巴仁波切');
+  // 修复可能的 "秋阳秋阳" 重复
+  result = result.replace(/秋阳秋阳/g, '秋阳');
 
   // 4. 修复其他重复字符
   result = result.replace(/([^\n])\1{2,}/g, '$1');
@@ -422,6 +419,53 @@ function standardizeOutput(text) {
   result = result.replace(/非常感谢您的提问/g, '');
 
   return result.trim();
+}
+
+// 优化回答排版
+function formatResponse(text) {
+  let result = text;
+
+  // 1. 确保段落之间有适当的空行
+  result = result.replace(/\n{2,}/g, '\n\n');
+
+  // 2. 如果段落开头没有标记且内容较长，添加适当的格式
+  const paragraphs = result.split('\n\n');
+  const formatted = paragraphs.map(p => {
+    p = p.trim();
+    if (!p) return '';
+
+    // 如果是列表项（以数字或 • 开头），保持原样
+    if (/^\d+[.、]/.test(p) || /^[-•*]/.test(p)) {
+      return p;
+    }
+
+    // 如果段落较长（超过100字），确保表达完整意思
+    if (p.length > 100 && !/[。！？]$/.test(p)) {
+      // 如果没有句末标点，添加句号
+      if (!/[。！？]$/.test(p)) {
+        p += '。';
+      }
+    }
+
+    return p;
+  });
+
+  result = formatted.filter(p => p).join('\n\n');
+
+  // 3. 清理每行开头多余的空格
+  result = result.split('\n').map(line => line.trim()).join('\n');
+
+  return result;
+}
+
+// 生成完整的来源说明
+function generateSourceNote(sources, relevantContent) {
+  if (!sources || sources.length === 0) {
+    return '\n\n---\n*本回答根据秋阳创巴仁波切的教法整理。*';
+  }
+
+  const sourceList = sources.join('、');
+  return `\n\n---\n*本回答整理自《创巴仁波切文集》${sourceList}。*`;
 }
 
 // 优化的系统提示词
@@ -445,12 +489,25 @@ function buildSystemPrompt(hasContext) {
 【术语统一】（必须严格遵守）
 ${getTermsGuidance()}
 
-【回答风格】
-- 直接切入主题，不铺垫废话
-- 分段清晰，每段表达一个完整观点
-- 举例说明时使用"例如："、"比如："引导
-- 列举时使用序号或项目符号
-- 避免过度解释，相信读者的理解能力
+【回答要求】
+1. **回答要全面详尽**：不要只给一句话或简短的定义，要：
+   - 解释概念的完整含义
+   - 说明其理论基础和背景
+   - 提供实际修行中的应用方法
+   - 给出具体的例子或比喻帮助理解
+   - 如果涉及多个方面，每个方面都要展开说明
+
+2. **排版格式**：
+   - 使用清晰的段落分隔
+   - 长内容使用分层结构（一、二、三... 或 1、2、3...）
+   - 适当使用"——"破折号强调要点
+   - 举例说明时使用"例如："、"比如："
+
+3. **语言风格**：
+   - 直接切入主题，避免冗长的开场白
+   - 每段话都要有实质内容
+   - 避免重复表达同样的意思
+   - 确保每个观点都解释清楚
 
 ${hasContext ? `
 【参考资料】
@@ -482,9 +539,9 @@ async function callZhipuAI(messages, context, apiKey) {
       { role: 'system', content: systemPrompt },
       ...messages
     ],
-    temperature: 0.2,
+    temperature: 0.3,
     top_p: 0.9,
-    max_tokens: 2500
+    max_tokens: 4000
   };
 
   const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
@@ -542,7 +599,7 @@ export async function onRequest(context) {
 
     // 获取数据并搜索
     const books = await getBooksData();
-    const relevantContent = searchContent(books, message, 5); // 增加到5条结果
+    const relevantContent = searchContent(books, message, 8); // 增加到8条结果
 
     // 组合上下文
     let contextStr = '';
@@ -565,10 +622,14 @@ export async function onRequest(context) {
     const response = await callZhipuAI(messages, contextStr, apiKey);
 
     // 后处理
-    const finalResponse = standardizeOutput(response);
+    let processedResponse = standardizeOutput(response);
+    processedResponse = formatResponse(processedResponse);
 
     // 生成友好的来源描述
     const sources = formatSources(relevantContent);
+
+    // 在回答结尾添加来源说明
+    const finalResponse = processedResponse + generateSourceNote(sources, relevantContent);
 
     return new Response(JSON.stringify({
       response: finalResponse,
