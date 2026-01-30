@@ -1,0 +1,93 @@
+#!/usr/bin/expect -f
+
+# Gitee Pages 部署脚本 - 自动处理认证
+
+set timeout 300
+set repo_url "https://gitee.com/laohuanglearndharma/trungpa-dharma-ai.git"
+
+# 设置认证信息
+set username "laohuanglearndharma"
+set password "Amituofo2026"
+
+spawn git push gitee main
+
+expect {
+    timeout {
+        send_user "\n❌ 操作超时\n"
+        exit 1
+    }
+
+    "Username for '*" {
+        send "$username\n"
+        exp_continue
+    }
+
+    "Password for '*" {
+        send "$password\n"
+        exp_continue
+    }
+
+    "Branch 'main' set up to track remote branch 'main'" {
+        # 意外情况，继续
+        exp_continue
+    }
+
+    "Everything up-to-date" {
+        send_user "\n✅ 推送成功！代码已是最新的\n"
+        exp_continue
+    }
+
+    "Branch 'main' set up to track remote branch 'main'" {
+        send_user "\n✅ 首次推送成功！\n"
+        exp_continue
+    }
+
+    "Enumerating objects" {
+        send_user "\n📤 正在上传...\n"
+        exp_continue
+    }
+
+    "Writing objects" {
+        send_user "\n📝 正在写入...\n"
+        exp_continue
+    }
+
+    "Total" {
+        send_user "\n📦 总进度: "
+        exp_continue
+    }
+
+    "remote:" {
+        send_user "\n\n"
+        exp_continue
+    }
+
+    "Receiving objects" {
+        send_user "\n✅ 服务器正在接收...\n"
+        exp_continue
+    }
+
+    "Resolving deltas" {
+        send_user "\n✅ 正在应用更改...\n"
+        exp_continue
+    }
+
+    "error:" {
+        send_user "\n❌ 错误: "
+        exp_continue
+    }
+
+    "fatal:" {
+        send_user "\n❌ 致命错误: "
+        exit 1
+    }
+
+    eof {
+        send_user "\n\n✅✅✅ 部署完成！\n"
+        send_user "\n📱 下一步：访问 Gitee Pages 开启服务\n"
+        send_user "\n🌐 Gitee 仓库：https://gitee.com/laohuanglearndharma/trungpa-dharma-ai\n"
+        exit 0
+    }
+}
+
+interact
