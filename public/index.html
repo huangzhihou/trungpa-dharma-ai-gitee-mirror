@@ -59,13 +59,12 @@
       width: 100%;
       margin: 0 auto;
       overflow: hidden;
-      height: 100vh;
     }
 
     .input-area {
       flex-shrink: 0;
       padding: 16px 20px;
-      background: #fff;
+      background: var(--cream);
       border-bottom: 1px solid #e8d5c4;
       box-shadow: 0 2px 8px rgba(139, 26, 26, 0.08);
     }
@@ -358,6 +357,13 @@
   </header>
 
   <div class="chat-area">
+    <div class="input-area">
+      <div class="input-inner">
+        <input type="text" id="messageInput" placeholder="输入问题..." autocomplete="off">
+        <button id="sendButton">提问</button>
+      </div>
+    </div>
+
     <div class="messages-container" id="messagesContainer">
       <div class="welcome" id="welcome">
         <div class="welcome-intro">
@@ -458,13 +464,6 @@
       </div>
       <div id="messages"></div>
       <div class="typing" id="typing">正在思考...</div>
-    </div>
-
-    <div class="input-area">
-      <div class="input-inner">
-        <input type="text" id="messageInput" placeholder="输入问题..." autocomplete="off">
-        <button id="sendButton">提问</button>
-      </div>
     </div>
   </div>
 
