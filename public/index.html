@@ -3,549 +3,318 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="基于秋阳创巴仁波切教法的 AI 对话助手">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Chögyam Trungpa 教法知识库</title>
+  <title>创巴仁波切教法</title>
+  <meta name="description" content="基于创巴仁波切十部文集的 AI 对话助手">
   <style>
     * {
       margin: 0;
       padding: 0;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+      background: #fafafa;
       min-height: 100vh;
-      min-height: -webkit-calc(100vh);
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding: 20px;
-      padding: 15px;
-      color: #333333;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-      background: #ffffff;
-      border: 1px solid #f0f0f0;
-      border-radius: 16px;
-      -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-      height: 85vh;
-      height: -webkit-calc(100vh - 30px);
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-flex-direction: column;
-      -ms-flex-direction: column;
       flex-direction: column;
+      color: #1a1a1a;
     }
 
     .header {
-      background: #ffffff;
-      color: #333333;
       padding: 24px 20px;
       text-align: center;
-      border-bottom: 1px solid #f0f0f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eaeaea;
     }
 
     .header h1 {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
     }
 
-    .header p {
-      font-size: 13px;
-      color: #666666;
+    .main {
+      flex: 1;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .history-btn {
-      padding: 8px 16px;
-      background: #f5f5f5;
-      border: 1px solid #e8e8e8;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
+    .welcome {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .welcome h2 {
+      font-size: 15px;
+      font-weight: 400;
       color: #666;
+      margin-bottom: 32px;
+      line-height: 1.8;
     }
 
-    .history-btn:hover {
-      background: #e8e8e8;
-      color: #333;
+    .topics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .topic {
+      padding: 16px;
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .topic:hover {
+      border-color: #1a1a1a;
+    }
+
+    .topic span {
+      font-size: 14px;
+      color: #1a1a1a;
     }
 
     .chat-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
-      background: #ffffff;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .chat-container.active {
+      display: block;
     }
 
     .message {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
+      margin-bottom: 24px;
     }
 
     .message.user {
-      align-items: flex-end;
-    }
-
-    .message.assistant {
-      align-items: flex-start;
+      text-align: right;
     }
 
     .message-content {
-      max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 8px;
-      line-height: 1.6;
+      display: inline-block;
+      max-width: 85%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.7;
       word-wrap: break-word;
-      white-space: pre-wrap;
     }
 
     .message.user .message-content {
-      background: #f5f5f5;
-      color: #333333;
-      border: 1px solid #e8e8e8;
-      border-bottom-right-radius: 4px;
+      background: #1a1a1a;
+      color: #fff;
     }
 
     .message.assistant .message-content {
-      background: #ffffff;
-      color: #333333;
-      border: 1px solid #f0f0f0;
-      border-bottom-left-radius: 4px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+      background: #fff;
+      border: 1px solid #eaeaea;
+      color: #1a1a1a;
     }
 
     .message-sources {
-      font-size: 11px;
-      color: #999999;
-      margin-top: 5px;
-      padding: 0 4px;
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
     }
 
-    .input-container {
-      padding: 20px;
-      background: #ffffff;
-      border-top: 1px solid #f0f0f0;
+    .input-wrap {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      background: #fff;
+      border-top: 1px solid #eaeaea;
+      display: none;
+    }
+
+    .input-wrap.active {
+      display: block;
+    }
+
+    .input-inner {
+      max-width: 680px;
+      margin: 0 auto;
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
 
     #messageInput {
       flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #e8e8e8;
-      border-radius: 8px;
+      padding: 14px 18px;
+      border: 1px solid #eaeaea;
+      border-radius: 24px;
       font-size: 15px;
-      transition: border-color 0.2s;
-      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s;
     }
 
     #messageInput:focus {
-      outline: none;
-      border-color: #333333;
-      background: #ffffff;
+      border-color: #1a1a1a;
     }
 
     #sendButton {
-      padding: 12px 24px;
-      background: #333333;
-      color: white;
+      padding: 14px 24px;
+      background: #1a1a1a;
+      color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 500;
+      border-radius: 24px;
+      font-size: 14px;
       cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    #sendButton:hover {
-      background: #000000;
+      transition: opacity 0.15s;
     }
 
     #sendButton:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .typing-indicator {
+    .typing {
       display: none;
-      align-items: center;
-      gap: 5px;
-      padding: 12px 16px;
-      background: #f5f5f5;
-      border: 1px solid #e8e8e8;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      width: fit-content;
-    }
-
-    .typing-indicator span {
-      width: 6px;
-      height: 6px;
-      background: #333333;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-
-    .typing-indicator span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-indicator span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.3;
-      }
-      30% {
-        transform: translateY(-4px);
-        opacity: 1;
-      }
-    }
-
-    .welcome-message {
-      text-align: center;
-      color: #666666;
-      margin-top: 20px;
-      padding: 0 40px;
-    }
-
-    .welcome-message h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333333;
-      margin-bottom: 16px;
-    }
-
-    .history-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .history-content {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      max-width: 600px;
-      max-height: 80vh;
-      overflow-y: auto;
-      width: 90%;
-    }
-
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    .history-header h2 {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
+      padding: 14px 18px;
       color: #999;
-      padding: 4px 8px;
-    }
-
-    .close-btn:hover {
-      color: #333;
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .history-item {
-      padding: 12px 16px;
-      background: #fafafa;
-      border: 1px solid #f0f0f0;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .history-item:hover {
-      background: #ffffff;
-      border-color: #333;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    .history-question {
       font-size: 14px;
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 4px;
     }
 
-    .history-time {
-      font-size: 12px;
-      color: #999;
-    }
-
-    .history-empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
+    .typing.active {
+      display: block;
     }
 
     @media (max-width: 600px) {
-      .container {
-        height: 90vh;
+      .topics {
+        grid-template-columns: 1fr;
       }
 
-      .message-content {
-        max-width: 90%;
-      }
-
-      .welcome-message {
-        padding: 0 20px;
+      .main {
+        padding: 32px 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <h1>📚 Chögyam Trungpa 教法知识库</h1>
-        <p>基于创巴仁波切 10 部文集的 AI 对话助手</p>
-      </div>
-      <button class="history-btn" onclick="showHistory()">📖 历史</button>
+  <header class="header">
+    <h1>创巴仁波切教法</h1>
+  </header>
+
+  <main class="main" id="mainPage">
+    <div class="welcome">
+      <h2>基于创巴仁波切十部文集<br>所有回答均出自原文</h2>
     </div>
 
-    <div class="chat-container" id="chatContainer">
-      <div class="welcome-message" id="welcomeMessage">
-        <h2>🙏 欢迎使用</h2>
-        <p>您可以自由提问任何关于 Chögyam Trungpa 喇嘛教法的问题。</p>
-        <p style="margin-top: 24px; font-size: 13px; color: #999;">
-          💡 在下方输入框中输入您的问题，开始对话
-        </p>
-      </div>
-      
-      <div class="typing-indicator" id="typingIndicator">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div class="topics">
+      <div class="topic" onclick="startChat('什么是精神唯物主义')"><span>精神唯物主义</span></div>
+      <div class="topic" onclick="startChat('如何修习正念')"><span>正念冥想</span></div>
+      <div class="topic" onclick="startChat('解释大手印')"><span>大手印</span></div>
+      <div class="topic" onclick="startChat('什么是基本善')"><span>基本善</span></div>
+      <div class="topic" onclick="startChat('上师的作用')"><span>上师与传承</span></div>
+      <div class="topic" onclick="startChat('香巴拉之道')"><span>香巴拉传统</span></div>
     </div>
+  </main>
 
-    <div class="input-container">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="输入您的问题..."
-        autocomplete="off"
-      >
+  <div class="chat-container" id="chatPage">
+    <div id="messages"></div>
+    <div class="typing" id="typing">正在思考...</div>
+  </div>
+
+  <div class="input-wrap" id="inputWrap">
+    <div class="input-inner">
+      <input type="text" id="messageInput" placeholder="输入问题..." autocomplete="off">
       <button id="sendButton">发送</button>
     </div>
   </div>
 
-  <div class="history-modal" id="historyModal">
-    <div class="history-content">
-      <div class="history-header">
-        <h2>📖 历史对话</h2>
-        <button class="close-btn" onclick="hideHistory()">×</button>
-      </div>
-      <div class="history-list" id="historyList">
-        <div class="history-empty">暂无历史对话</div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const chatContainer = document.getElementById('chatContainer');
+    const mainPage = document.getElementById('mainPage');
+    const chatPage = document.getElementById('chatPage');
+    const inputWrap = document.getElementById('inputWrap');
+    const messages = document.getElementById('messages');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const welcomeMessage = document.getElementById('welcomeMessage');
-    const historyModal = document.getElementById('historyModal');
-    const historyList = document.getElementById('historyList');
+    const typing = document.getElementById('typing');
 
-    let chatHistory = [];
+    let history = [];
 
-    // 添加消息到界面
+    function startChat(question) {
+      mainPage.style.display = 'none';
+      chatPage.classList.add('active');
+      inputWrap.classList.add('active');
+      if (question) {
+        sendMessage(question);
+      }
+    }
+
     function addMessage(role, content, sources = []) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${role}`;
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
 
       const contentDiv = document.createElement('div');
       contentDiv.className = 'message-content';
       contentDiv.textContent = content;
 
-      messageDiv.appendChild(contentDiv);
+      div.appendChild(contentDiv);
 
-      if (sources && sources.length > 0) {
+      if (sources.length > 0) {
         const sourcesDiv = document.createElement('div');
         sourcesDiv.className = 'message-sources';
         sourcesDiv.textContent = `来源: ${sources.join(', ')}`;
-        messageDiv.appendChild(sourcesDiv);
+        div.appendChild(sourcesDiv);
       }
 
-      chatContainer.insertBefore(messageDiv, typingIndicator);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-
-      return messageDiv;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
     }
 
-    // 发送消息
-    async function sendMessage() {
-      const message = messageInput.value.trim();
+    async function sendMessage(msg) {
+      const message = msg || messageInput.value.trim();
       if (!message) return;
 
-      // 隐藏欢迎消息
-      welcomeMessage.style.display = 'none';
-
-      // 添加用户消息
-      addMessage('user', message);
-      chatHistory.push({ role: 'user', content: message, timestamp: new Date().toISOString() });
-
-      // 清空输入框
       messageInput.value = '';
+      addMessage('user', message);
+      history.push({ role: 'user', content: message });
+
+      typing.classList.add('true');
       sendButton.disabled = true;
 
-      // 显示输入指示器
-      typingIndicator.style.display = 'flex';
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-
       try {
-        const response = await fetch('/api/chat', {
+        const res = await fetch('/api/chat', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: message,
-            history: chatHistory
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, history })
         });
-
-        const data = await response.json();
+        const data = await res.json();
 
         if (data.error) {
-          addMessage('assistant', `错误: ${data.error}`);
+          addMessage('assistant', '抱歉，出现了错误: ' + data.error);
         } else {
-          addMessage('assistant', data.response, data.sources);
-          chatHistory.push({ role: 'assistant', content: data.response, timestamp: new Date().toISOString() });
-          
-          // 保存到历史记录
-          saveHistory(message, data.response);
+          addMessage('assistant', data.response, data.sources || []);
+          history.push({ role: 'assistant', content: data.response });
         }
-      } catch (error) {
-        addMessage('assistant', `网络错误: ${error.message}`);
-      } finally {
-        typingIndicator.style.display = 'none';
-        sendButton.disabled = false;
-        messageInput.focus();
+      } catch (err) {
+        addMessage('assistant', '网络连接失败，请稍后重试');
       }
+
+      typing.classList.remove('true');
+      sendButton.disabled = false;
+      messageInput.focus();
     }
 
-    // 显示历史记录
-    function showHistory() {
-      const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-      
-      if (history.length === 0) {
-        historyList.innerHTML = '<div class="history-empty">暂无历史对话</div>';
-      } else {
-        historyList.innerHTML = history.map(item => `
-          <div class="history-item" onclick="loadHistory('${encodeURIComponent(item.question)}')">
-            <div class="history-question">${item.question}</div>
-            <div class="history-time">${new Date(item.timestamp).toLocaleString('zh-CN')}</div>
-          </div>
-        `).join('');
-      }
-      
-      historyModal.style.display = 'flex';
-    }
-
-    // 隐藏历史记录
-    function hideHistory() {
-      historyModal.style.display = 'none';
-    }
-
-    // 保存历史记录
-    function saveHistory(question, answer) {
-      const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-      history.unshift({
-        question: question,
-        answer: answer,
-        timestamp: new Date().toISOString()
-      });
-      
-      // 只保留最近 100 条
-      if (history.length > 100) {
-        history.splice(100);
-      }
-      
-      localStorage.setItem('chatHistory', JSON.stringify(history));
-    }
-
-    // 加载历史对话
-    function loadHistory(encodedQuestion) {
-      const question = decodeURIComponent(encodedQuestion);
-      messageInput.value = question;
-      hideHistory();
-      sendMessage();
-    }
-
-    // 事件监听
-    sendButton.addEventListener('click', sendMessage);
-
+    sendButton.addEventListener('click', () => sendMessage());
     messageInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendMessage();
-      }
-    });
-
-    // 点击模态框外部关闭
-    historyModal.addEventListener('click', (e) => {
-      if (e.target === historyModal) {
-        hideHistory();
-      }
+      if (e.key === 'Enter') sendMessage();
     });
   </script>
 </body>
