@@ -13,25 +13,27 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
-      background: #fafafa;
+      font-family: 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, serif;
+      background: #f8f6f3;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      color: #1a1a1a;
+      color: #2d2d2d;
+      line-height: 1.8;
     }
 
     .header {
       padding: 24px 20px;
       text-align: center;
       background: #fff;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid #e5e0d8;
     }
 
     .header h1 {
-      font-size: 20px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #3d3d3d;
     }
 
     .main {
@@ -110,11 +112,12 @@
     .message-content {
       display: inline-block;
       max-width: 85%;
-      padding: 14px 18px;
+      padding: 16px 20px;
       border-radius: 12px;
-      font-size: 15px;
-      line-height: 1.7;
+      font-size: 17px;
+      line-height: 1.9;
       word-wrap: break-word;
+      letter-spacing: 0.3px;
     }
 
     .message.user .message-content {
@@ -129,9 +132,11 @@
     }
 
     .message-sources {
-      font-size: 12px;
-      color: #999;
-      margin-top: 8px;
+      font-size: 13px;
+      color: #888;
+      margin-top: 10px;
+      line-height: 1.6;
+      font-style: italic;
     }
 
     .input-wrap {
@@ -216,8 +221,9 @@
 
       .message-content {
         max-width: 90%;
-        font-size: 14px;
-        padding: 12px 14px;
+        font-size: 16px;
+        padding: 14px 16px;
+        line-height: 1.8;
       }
 
       .input-inner {
