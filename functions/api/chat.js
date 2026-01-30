@@ -725,7 +725,8 @@ export async function onRequest(context) {
       { role: 'user', content: message }
     ];
 
-    const apiKey = env.ZHIPU_API_KEY || '';
+    const apiKey = 'a3b94c17d28e4940b5102294f1d9cf61.uB51O7OoEEejjWlL';
+    console.log('使用硬编码 API Key');
     const response = await callZhipuAI(messages, contextStr, apiKey);
 
     // 后处理

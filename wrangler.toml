@@ -1,12 +1,7 @@
 name = "trungpa-dharma-ai"
 compatibility_date = "2024-01-01"
 
-# 页面配置
 [pages]
-# 静态资源目录（如果使用 wrangler pages deploy 命令）
 
-# 环境变量（生产环境）
 [vars]
-# 环境变量在 Cloudflare Dashboard 中配置
-
-# ZHIPU_API_KEY 在 Cloudflare Dashboard → Settings → Environment variables 中配置
+ZHIPU_API_KEY = "a3b94c17d28e4940b5102294f1d9cf61.uB51O7OoEEejjWlL"
