@@ -1,1 +1,7 @@
-# API 路由由 Functions 处理
+# Cloudflare Pages 重定向配置
+
+# API 路由 - 由 Functions 处理
+/api/* /api/:path 200
+
+# 所有其他请求使用 index-vercel.html
+/* /index-vercel.html 200
