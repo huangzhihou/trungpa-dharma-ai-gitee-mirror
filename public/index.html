@@ -12,53 +12,111 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --primary-red: #8B1A1A;
+      --saffron: #D4661F;
+      --gold: #C9A227;
+      --dark-red: #5C0E0E;
+      --cream: #F5F0E8;
+      --text-dark: #2C1810;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
-      background: #fafafa;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--cream);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      color: #1a1a1a;
+      color: var(--text-dark);
     }
 
     .header {
-      padding: 20px;
+      padding: 16px 20px;
       text-align: center;
-      background: #fff;
-      border-bottom: 1px solid #eaeaea;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     .header h1 {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 500;
+      letter-spacing: 1px;
     }
 
-    .index-btn {
-      padding: 8px 16px;
-      background: #fff;
-      border: 1px solid #eaeaea;
-      border-radius: 20px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .index-btn:hover {
-      border-color: #1a1a1a;
+    .header .subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 4px;
     }
 
     .chat-area {
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 680px;
+      max-width: 800px;
       width: 100%;
       margin: 0 auto;
       overflow: hidden;
+    }
+
+    .input-area {
+      padding: 16px 20px;
+      background: #fff;
+      border-bottom: 1px solid #e8d5c4;
+      box-shadow: 0 2px 8px rgba(139, 26, 26, 0.08);
+    }
+
+    .input-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid var(--saffron);
+      border-radius: 28px;
+      font-size: 15px;
+      outline: none;
+      background: var(--cream);
+      transition: all 0.2s;
+    }
+
+    #messageInput:focus {
+      background: #fff;
+      border-color: var(--primary-red);
+      box-shadow: 0 0 0 4px rgba(139, 26, 26, 0.1);
+    }
+
+    #sendButton {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 28px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(139, 26, 26, 0.25);
+    }
+
+    #sendButton:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(139, 26, 26, 0.35);
+    }
+
+    #sendButton:active {
+      transform: translateY(0);
+    }
+
+    #sendButton:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .messages-container {
@@ -68,16 +126,51 @@
     }
 
     .welcome {
-      text-align: center;
-      padding: 60px 20px;
-      color: #666;
+      padding: 0 0 20px 0;
     }
 
-    .welcome h2 {
-      font-size: 15px;
-      font-weight: 400;
-      line-height: 1.8;
-      margin-bottom: 16px;
+    .welcome-intro {
+      text-align: center;
+      padding: 16px 0;
+      color: var(--text-dark);
+      font-size: 13px;
+      line-height: 1.7;
+      opacity: 0.9;
+    }
+
+    .topics-section {
+      margin-top: 12px;
+    }
+
+    .volume-group {
+      margin-bottom: 10px;
+      background: #fff;
+      border-left: 3px solid var(--saffron);
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .volume-header {
+      font-size: 11px;
+      color: var(--primary-red);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .topics-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .topic-tag {
+      font-size: 11px;
+      color: #666;
+      background: linear-gradient(135deg, #fef6f0 0%, #faf0e6 100%);
+      border: 1px solid #f0e6d8;
+      padding: 3px 8px;
+      border-radius: 4px;
     }
 
     .message {
@@ -91,213 +184,88 @@
     .message-content {
       display: inline-block;
       max-width: 85%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 15px;
-      line-height: 1.7;
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-size: 16px;
+      line-height: 1.9;
       word-wrap: break-word;
+      white-space: pre-wrap;
     }
 
     .message.user .message-content {
-      background: #1a1a1a;
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
       color: #fff;
     }
 
     .message.assistant .message-content {
       background: #fff;
-      border: 1px solid #eaeaea;
-      color: #1a1a1a;
+      border: 1px solid #e8d5c4;
+      color: var(--text-dark);
+      text-align: left;
     }
 
+    /* 段落样式：首行缩进 + 段落间距 */
+    .message.assistant .message-content p {
+      margin-bottom: 14px;
+      text-indent: 2em;
+    }
+
+    .message.assistant .message-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* 出处样式 */
     .message-sources {
       font-size: 12px;
-      color: #999;
-      margin-top: 6px;
+      color: #888;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #ddd;
+      text-align: left;
+      margin-left: 4px;
+      max-width: 85%;
     }
 
-    .input-area {
-      padding: 16px 20px;
-      background: #fff;
-      border-top: 1px solid #eaeaea;
+    .sources-label {
+      font-weight: 600;
+      color: var(--primary-red);
+      margin-right: 6px;
     }
 
-    .input-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-    }
-
-    #messageInput {
-      flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #eaeaea;
-      border-radius: 24px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    #messageInput:focus {
-      border-color: #1a1a1a;
-    }
-
-    #sendButton {
-      padding: 12px 22px;
-      background: #1a1a1a;
-      color: #fff;
-      border: none;
-      border-radius: 24px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    #sendButton:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+    .source-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #fef6f0 0%, #f8f0e8 100%);
+      border: 1px solid #e8d5c4;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin: 3px 4px 3px 0;
+      font-size: 11px;
+      color: #666;
     }
 
     .typing {
       display: none;
-      padding: 12px 16px;
+      padding: 8px 16px;
       color: #999;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: #fff;
-      width: 90%;
-      max-width: 700px;
-      max-height: 80vh;
-      margin: auto;
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid #eaeaea;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h2 {
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #999;
-      padding: 0 8px;
-    }
-
-    .close-btn:hover {
-      color: #333;
-    }
-
-    .modal-body {
-      padding: 20px;
-      overflow-y: auto;
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    .modal-body h2 {
-      font-size: 16px;
-      font-weight: 500;
-      margin: 20px 0 10px;
-    }
-
-    .modal-body h3 {
-      font-size: 14px;
-      font-weight: 500;
-      margin: 16px 0 8px;
-      color: #333;
-    }
-
-    .modal-body h4 {
-      font-size: 13px;
-      font-weight: 500;
-      margin: 12px 0 6px;
-      color: #666;
-    }
-
-    .modal-body p {
-      margin-bottom: 10px;
-      color: #555;
-    }
-
-    .modal-body ul {
-      margin-left: 20px;
-      margin-bottom: 10px;
-    }
-
-    .modal-body li {
-      margin-bottom: 4px;
-    }
-
-    .modal-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 10px 0;
-      font-size: 13px;
-    }
-
-    .modal-body th, .modal-body td {
-      border: 1px solid #eaeaea;
-      padding: 8px;
-      text-align: left;
-    }
-
-    .modal-body th {
-      background: #f9f9f9;
-      font-weight: 500;
-    }
-
-    .modal-body code {
-      background: #f5f5f5;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
     @media (max-width: 600px) {
-      .input-inner {
-        flex-wrap: wrap;
+      .messages-container {
+        padding: 12px 16px;
+      }
+
+      #messageInput {
+        padding: 12px 16px;
       }
 
       #sendButton {
-        flex: 1;
-      }
-
-      .modal-body {
-        padding: 16px;
+        padding: 12px 20px;
+        font-size: 14px;
       }
     }
   </style>
@@ -305,132 +273,117 @@
 <body>
   <header class="header">
     <h1>创巴仁波切教法</h1>
-    <button class="index-btn" onclick="showModal()">索引</button>
+    <div class="subtitle">The Collected Works of Chögyam Trungpa</div>
   </header>
 
   <div class="chat-area">
-    <div class="messages-container" id="messagesContainer">
-      <div class="welcome" id="welcome">
-        <h2>基于创巴仁波切十部文集<br>所有回答均出自原文</h2>
-      </div>
-      <div id="messages"></div>
-      <div class="typing" id="typing">正在思考...</div>
-    </div>
-
     <div class="input-area">
       <div class="input-inner">
         <input type="text" id="messageInput" placeholder="输入问题..." autocomplete="off">
-        <button id="sendButton">发送</button>
+        <button id="sendButton">提问</button>
       </div>
     </div>
-  </div>
 
-  <!-- Modal -->
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>教法大纲</h2>
-        <button class="close-btn" onclick="hideModal()">&times;</button>
+    <div class="messages-container" id="messagesContainer">
+      <div class="welcome" id="welcome">
+        <div class="welcome-intro">
+          基于创巴仁波切十部文集，所有回答均出自原文
+        </div>
+        <div class="topics-section">
+          <div class="volume-group">
+            <div class="volume-header">卷一 — 早期禅修教导</div>
+            <div class="topics-list">
+              <span class="topic-tag">西藏佛教</span>
+              <span class="topic-tag">禅修入门</span>
+              <span class="topic-tag">正念呼吸</span>
+              <span class="topic-tag">行动中的禅修</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷二 — 自由的神话</div>
+            <div class="topics-list">
+              <span class="topic-tag">自由的真义</span>
+              <span class="topic-tag">狮子的吼声</span>
+              <span class="topic-tag">觉悟道路</span>
+              <span class="topic-tag">因果业力</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷三 — 精神唯物主义</div>
+            <div class="topics-list">
+              <span class="topic-tag">精神唯物主义</span>
+              <span class="topic-tag">修道陷阱</span>
+              <span class="topic-tag">自我的游戏</span>
+              <span class="topic-tag">上师与弟子</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷四 — 佛法核心</div>
+            <div class="topics-list">
+              <span class="topic-tag">四圣谛</span>
+              <span class="topic-tag">八正道</span>
+              <span class="topic-tag">缘起</span>
+              <span class="topic-tag">空性</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷五 — 菩萨道训练</div>
+            <div class="topics-list">
+              <span class="topic-tag">菩提心</span>
+              <span class="topic-tag">布施</span>
+              <span class="topic-tag">忍辱</span>
+              <span class="topic-tag">六度波罗蜜</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷六 — 金刚乘道</div>
+            <div class="topics-list">
+              <span class="topic-tag">金刚乘</span>
+              <span class="topic-tag">灌顶</span>
+              <span class="topic-tag">本尊瑜伽</span>
+              <span class="topic-tag">三昧耶</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷七 — 香巴拉教法</div>
+            <div class="topics-list">
+              <span class="topic-tag">本初善</span>
+              <span class="topic-tag">东方大日</span>
+              <span class="topic-tag">勇士之道</span>
+              <span class="topic-tag">风马</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷八 — 香巴拉训练</div>
+            <div class="topics-list">
+              <span class="topic-tag">神圣世界</span>
+              <span class="topic-tag">勇士戒律</span>
+              <span class="topic-tag">战胜恐惧</span>
+              <span class="topic-tag">温柔与精确</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷九 — 诗歌与艺术</div>
+            <div class="topics-list">
+              <span class="topic-tag">冥想诗歌</span>
+              <span class="topic-tag">书法之道</span>
+              <span class="topic-tag">艺术与觉知</span>
+              <span class="topic-tag">四季雨</span>
+            </div>
+          </div>
+          <div class="volume-group">
+            <div class="volume-header">卷十 — 晚期教法</div>
+            <div class="topics-list">
+              <span class="topic-tag">疯智</span>
+              <span class="topic-tag">无目标之旅</span>
+              <span class="topic-tag">金刚见</span>
+              <span class="topic-tag">大圆满</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modal-body" id="modalBody">
-        <h2>目录</h2>
-        <ul>
-          <li><a href="#overview">全集概览</a></li>
-          <li><a href="#themes">核心主题</a></li>
-          <li><a href="#path">学习路径</a></li>
-        </ul>
-
-        <h2 id="overview">10卷全集结构</h2>
-        <table>
-          <tr><th>卷号</th><th>主要主题</th><th>核心著作</th></tr>
-          <tr><td>卷1</td><td>早期生平与禅修入门</td><td>Born in Tibet, Meditation in Action</td></tr>
-          <tr><td>卷2</td><td>自由的神话与困境</td><td>The Myth of Freedom, The Lion's Roar</td></tr>
-          <tr><td>卷3</td><td>精神物质主义</td><td>Cutting Through Spiritual Materialism</td></tr>
-          <tr><td>卷4</td><td>禅修指导</td><td>The Heart of the Buddha</td></tr>
-          <tr><td>卷5</td><td>菩萨道训练</td><td>Training the Mind, Illusion's Game</td></tr>
-          <tr><td>卷6</td><td>金刚乘道</td><td>The Path Is the Goal</td></tr>
-          <tr><td>卷7</td><td>香巴拉教法</td><td>Shambhala, Great Eastern Sun</td></tr>
-          <tr><td>卷8</td><td>香巴拉训练</td><td>Sacred World, Great Eastern Sun</td></tr>
-          <tr><td>卷9</td><td>诗歌与艺术</td><td>Timely Rain, The Art of Calligraphy</td></tr>
-          <tr><td>卷10</td><td>晚期教法</td><td>Journey without Goal, Crazy Wisdom</td></tr>
-        </table>
-
-        <h2 id="themes">核心主题</h2>
-
-        <h3>精神物质主义</h3>
-        <p><strong>定义：</strong>自我利用修道来滋养自己</p>
-        <p><strong>表现：</strong>修道上的成就感、优越感、特殊体验</p>
-        <p><strong>对治：</strong>觉知、放下、直截观察</p>
-
-        <h3>正念禅修</h3>
-        <ul>
-          <li>姿势的重要性</li>
-          <li>观呼吸</li>
-          <li>处理杂念：不强求、不放松、不执着</li>
-        </ul>
-
-        <h3>本初善</h3>
-        <p>众生的本性本来就是善的，这不是道德判断，而是存在本质。我们不需要"变成"，而是"发现"。</p>
-
-        <h3>勇士的四项品质</h3>
-        <ul>
-          <li><strong>无畏：</strong>不是没有恐惧，而是面对恐惧</li>
-          <li><strong>温柔：</strong>对自己和世界的开放</li>
-          <li><strong>精确：</strong>清晰的觉知</li>
-          <li><strong>放逸：</strong>放下执着，自由的参与</li>
-        </ul>
-
-        <h3>六度波罗蜜</h3>
-        <ul>
-          <li>布施：放下执着</li>
-          <li>持戒：觉知地行动</li>
-          <li>忍辱：接受现状</li>
-          <li>精进：持续的觉知</li>
-          <li>禅定：心的安定</li>
-          <li>般若：智慧的洞见</li>
-        </ul>
-
-        <h3>金刚乘特点</h3>
-        <ul>
-          <li>运用一切经验作为修道</li>
-          <li>不排斥，而是转化</li>
-          <li>需要上师指导</li>
-        </ul>
-
-        <h2 id="path">学习路径建议</h2>
-
-        <h3>初学者（0-6个月）</h3>
-        <ol>
-          <li>Meditation in Action - 理解禅修与生活</li>
-          <li>The Myth of Freedom - 理解自由的真义</li>
-          <li>Cutting Through Spiritual Materialism - 认识修道陷阱</li>
-        </ol>
-
-        <h3>中级（6个月-2年）</h3>
-        <ol>
-          <li>The Heart of the Buddha - 佛法核心</li>
-          <li>Training the Mind - 菩萨道训练</li>
-          <li>Shambhala: Sacred Path of the Warrior - 勇士之道</li>
-        </ol>
-
-        <h3>深入（2年以上）</h3>
-        <ol>
-          <li>The Path Is the Goal - 金刚乘道</li>
-          <li>Journey without Goal - 密续深入</li>
-          <li>Crazy Wisdom - 疯智教导</li>
-        </ol>
-
-        <h3>术语对照</h3>
-        <ul>
-          <li>般若 - 智慧</li>
-          <li>菩提心 - 觉悟心</li>
-          <li>空性 - 无自性</li>
-          <li>止 - 平静安住</li>
-          <li>观 - 洞察</li>
-          <li>本初善 - 基本善</li>
-          <li>精神唯物主义 - 修道陷阱</li>
-        </ul>
-      </div>
+      <div id="messages"></div>
+      <div class="typing" id="typing">正在思考...</div>
     </div>
   </div>
 
@@ -441,23 +394,8 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const typing = document.getElementById('typing');
-    const modal = document.getElementById('modal');
 
     let history = [];
-
-    function showModal() {
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function hideModal() {
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) hideModal();
-    });
 
     function addMessage(role, content, sources = []) {
       const div = document.createElement('div');
@@ -465,14 +403,39 @@
 
       const contentDiv = document.createElement('div');
       contentDiv.className = 'message-content';
-      contentDiv.textContent = content;
+
+      // AI 回答使用段落格式
+      if (role === 'assistant' && content.includes('\n')) {
+        const paragraphs = content.split('\n').filter(p => p.trim());
+        paragraphs.forEach(para => {
+          const p = document.createElement('p');
+          p.textContent = para;
+          contentDiv.appendChild(p);
+        });
+      } else {
+        contentDiv.textContent = content;
+      }
 
       div.appendChild(contentDiv);
 
       if (sources.length > 0) {
         const sourcesDiv = document.createElement('div');
         sourcesDiv.className = 'message-sources';
-        sourcesDiv.textContent = `来源: ${sources.join(', ')}`;
+
+        // 添加标签图标
+        const label = document.createElement('span');
+        label.className = 'sources-label';
+        label.textContent = '📖 出处：';
+        sourcesDiv.appendChild(label);
+
+        // 使用标签样式显示每个出处
+        sources.forEach(source => {
+          const tag = document.createElement('span');
+          tag.className = 'source-tag';
+          tag.textContent = source;
+          sourcesDiv.appendChild(tag);
+        });
+
         div.appendChild(sourcesDiv);
       }
 
