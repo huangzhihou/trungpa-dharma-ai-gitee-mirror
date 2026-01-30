@@ -276,13 +276,19 @@ function extractKeywords(query) {
 
   // 提取英文单词
   const englishWords = query.toLowerCase().match(/[a-z]+/gi) || [];
-  // 提取中文词组（2-4个字）
-  const chineseWords = query.match(/[\u4e00-\u9fa5]{2,4}/g) || [];
+  // 提取中文词组（2-6个字，保留更长的词组）
+  const chineseWords = query.match(/[\u4e00-\u9fa5]{2,6}/g) || [];
 
   const keywords = [
     ...englishWords.filter(w => w.length > 2 && !stopWords.has(w)),
     ...chineseWords.filter(w => !stopWords.has(w))
   ];
+
+  // 如果没有中文词组，尝试提取整个中文部分
+  if (keywords.length === 0 || (keywords.length === englishWords.length)) {
+    const allChinese = query.match(/[\u4e00-\u9fa5]+/g) || [];
+    keywords.push(...allChinese.filter(w => !stopWords.has(w)));
+  }
 
   return [...new Set(keywords)];
 }
