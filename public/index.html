@@ -217,33 +217,15 @@
       margin-bottom: 0;
     }
 
-    /* 出处样式 */
-    .message-sources {
-      font-size: 12px;
+    /* 出处段落样式 */
+    .message.assistant .message-content p:last-child {
+      text-indent: 0;
       color: #888;
-      margin-top: 12px;
-      padding-top: 10px;
+      font-size: 13px;
       border-top: 1px dashed #ddd;
-      text-align: left;
-      margin-left: 4px;
-      max-width: 85%;
-    }
-
-    .sources-label {
-      font-weight: 600;
-      color: var(--primary-red);
-      margin-right: 6px;
-    }
-
-    .source-tag {
-      display: inline-block;
-      background: linear-gradient(135deg, #fef6f0 0%, #f8f0e8 100%);
-      border: 1px solid #e8d5c4;
-      padding: 3px 10px;
-      border-radius: 12px;
-      margin: 3px 4px 3px 0;
-      font-size: 11px;
-      color: #666;
+      padding-top: 10px;
+      margin-top: 8px;
+      font-style: italic;
     }
 
     .typing {
@@ -299,18 +281,11 @@
         text-indent: 1.5em;
       }
 
-      /* 移动端出处：更紧凑 */
-      .message-sources {
-        font-size: 11px;
-        margin-top: 8px;
+      /* 移动端出处段落 */
+      .message.assistant .message-content p:last-child {
+        font-size: 12px;
         padding-top: 8px;
-        max-width: 90%;
-      }
-
-      .source-tag {
-        padding: 2px 8px;
-        font-size: 10px;
-        margin: 2px 3px 2px 0;
+        margin-top: 6px;
       }
 
       /* 输入框固定底部 */
@@ -508,9 +483,19 @@
       const contentDiv = document.createElement('div');
       contentDiv.className = 'message-content';
 
-      // AI 回答使用段落格式
-      if (role === 'assistant' && content.includes('\n')) {
-        const paragraphs = content.split('\n').filter(p => p.trim());
+      // AI 回答：包含内容 + 出处
+      if (role === 'assistant') {
+        const paragraphs = [];
+
+        // 添加正文段落
+        const contentParagraphs = content.split('\n').filter(p => p.trim());
+        paragraphs.push(...contentParagraphs);
+
+        // 在结尾添加出处
+        if (sources.length > 0) {
+          paragraphs.push('—— 出自《创巴仁波切文集》: ' + sources.join('、'));
+        }
+
         paragraphs.forEach(para => {
           const p = document.createElement('p');
           p.textContent = para;
@@ -521,28 +506,6 @@
       }
 
       div.appendChild(contentDiv);
-
-      if (sources.length > 0) {
-        const sourcesDiv = document.createElement('div');
-        sourcesDiv.className = 'message-sources';
-
-        // 添加标签图标
-        const label = document.createElement('span');
-        label.className = 'sources-label';
-        label.textContent = '📖 出处：';
-        sourcesDiv.appendChild(label);
-
-        // 使用标签样式显示每个出处
-        sources.forEach(source => {
-          const tag = document.createElement('span');
-          tag.className = 'source-tag';
-          tag.textContent = source;
-          sourcesDiv.appendChild(tag);
-        });
-
-        div.appendChild(sourcesDiv);
-      }
-
       messages.appendChild(div);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
