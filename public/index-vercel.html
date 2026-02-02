@@ -34,6 +34,7 @@
       text-align: center;
       background: #fff;
       border-bottom: 1px solid #e5e0d8;
+      position: relative;
     }
 
     .header h1 {
@@ -41,6 +42,34 @@
       font-weight: 600;
       letter-spacing: 1px;
       color: #3d3d3d;
+    }
+
+    /* 返回按钮 */
+    .back-button {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: none;
+      color: #666;
+      transition: color 0.2s;
+    }
+
+    .back-button:hover {
+      color: #1a1a1a;
+    }
+
+    .back-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .back-button.active {
+      display: block;
     }
 
     .main {
@@ -95,8 +124,8 @@
       flex: 1;
       height: calc(100vh - 140px);
       overflow-y: auto;
-      padding: 20px;
-      padding-bottom: 80px;
+      padding: 24px 20px;
+      padding-bottom: 100px;
       max-width: 680px;
       width: 100%;
       margin: 0 auto;
@@ -109,7 +138,21 @@
     }
 
     .message {
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .message:last-child {
+      margin-bottom: 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .message.user {
@@ -119,31 +162,79 @@
     .message-content {
       display: inline-block;
       max-width: 85%;
-      padding: 16px 20px;
-      border-radius: 12px;
-      font-size: 17px;
+      padding: 20px 24px;
+      border-radius: 16px;
+      font-size: 16px;
       line-height: 1.9;
       word-wrap: break-word;
       letter-spacing: 0.3px;
+      text-align: left;
+    }
+
+    /* AI 回答内容排版优化 */
+    .message.assistant .message-content {
+      text-align: left;
+    }
+
+    .message-content p {
+      margin: 0 0 1em 0;
+    }
+
+    .message-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-content ul,
+    .message-content ol {
+      margin: 1em 0;
+      padding-left: 1.5em;
+    }
+
+    .message-content li {
+      margin: 0.5em 0;
+      line-height: 1.8;
+    }
+
+    .message-content strong {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .message-content em {
+      font-style: italic;
+      color: #555;
     }
 
     .message.user .message-content {
-      background: #1a1a1a;
+      background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
       color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .message.assistant .message-content {
       background: #fff;
-      border: 1px solid #eaeaea;
-      color: #1a1a1a;
+      border: 1px solid #e8e8e8;
+      color: #2d2d2d;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
+    /* 来源引用样式优化 */
     .message-sources {
-      font-size: 13px;
-      color: #888;
-      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #e0e0e0;
       line-height: 1.6;
-      font-style: italic;
+      font-style: normal;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .message-sources::before {
+      content: '📖';
+      font-size: 11px;
     }
 
     .loading-indicator {
@@ -257,14 +348,19 @@
 
       .chat-container {
         height: calc(100vh - 160px);
-        padding-bottom: 100px;
+        padding: 20px 16px;
+        padding-bottom: 110px;
+      }
+
+      .message {
+        margin-bottom: 28px;
       }
 
       .message-content {
         max-width: 90%;
-        font-size: 16px;
-        padding: 14px 16px;
-        line-height: 1.8;
+        font-size: 15px;
+        padding: 16px 18px;
+        line-height: 1.85;
       }
 
       .input-inner {
@@ -292,6 +388,11 @@
 </head>
 <body>
   <header class="header">
+    <button class="back-button" id="backButton" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
     <h1>创巴仁波切教法</h1>
   </header>
 
@@ -343,9 +444,44 @@
         mainPage.style.display = 'none';
         chatPage.classList.add('active');
         inputWrap.classList.add('active');
+        document.getElementById('backButton')?.classList.add('active');
         if (question) {
           sendMessage(question);
         }
+      }
+
+      function goBack() {
+        mainPage.style.display = 'flex';
+        chatPage.classList.remove('active');
+        inputWrap.classList.remove('active');
+        document.getElementById('backButton')?.classList.remove('active');
+        history = [];
+        messagesContainer.innerHTML = '';
+      }
+
+      // 格式化内容：将换行符转换为段落，处理基本格式
+      function formatContent(content) {
+        if (!content) return '';
+
+        // 转义 HTML 特殊字符防止 XSS
+        let html = content
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+
+        // 处理加粗 **text**
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+        // 处理斜体 *text*
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+        // 将双换行符转换为段落分隔
+        const paragraphs = html.split(/\n\n+/);
+        return paragraphs.map(p => {
+          // 单个换行符转换为 <br>
+          const lines = p.split(/\n/).join('<br>');
+          return `<p>${lines}</p>`;
+        }).join('');
       }
 
       function addMessage(role, content, sources = []) {
@@ -356,14 +492,14 @@
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        contentDiv.textContent = content;
+        contentDiv.innerHTML = formatContent(content);
 
         div.appendChild(contentDiv);
 
         if (sources && sources.length > 0) {
           const sourcesDiv = document.createElement('div');
           sourcesDiv.className = 'message-sources';
-          sourcesDiv.textContent = `来源: ${sources.join(', ')}`;
+          sourcesDiv.innerHTML = `<span>${sources.join(' · ')}</span>`;
           div.appendChild(sourcesDiv);
         }
 
@@ -425,6 +561,7 @@
 
       // 暴露全局函数
       window.startChat = startChat;
+      window.goBack = goBack;
     })();
   </script>
 </body>
